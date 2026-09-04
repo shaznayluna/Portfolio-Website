@@ -11,6 +11,7 @@
   --chip:       #EEF2F7;   /* tag pill background */
   --line:       #E4EAF0;
   --live:       #2ECC71;   /* the "available" dot */
+  --grid-line:  rgba(46, 56, 66, 0.042);  /* header grid, deliberately faint */
 
   --shell:      1200px;    /* max content width */
   --gutter:     clamp(1.5rem, 5vw, 5rem);
@@ -18,6 +19,37 @@
   --radius-sm:  10px;
   --radius-md:  14px;
 }
+
+/* ------------------------------------------------------------------
+   DARK THEME
+   Only the colour tokens are redefined — every rule below reads them,
+   so nothing else needs a dark variant. Declared twice on purpose:
+   the media query serves people whose OS is dark before any choice is
+   made (and if JS never runs), the attribute serves the toggle and
+   wins in both directions once they pick.
+   ------------------------------------------------------------------ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink:       #E7EDF3;
+    --ink-soft:  #94A3B2;
+    --paper:     #0E1217;
+    --chip:      #1A212A;
+    --line:      #262F3A;
+    --live:      #35D07F;
+    --grid-line: rgba(231, 237, 243, 0.05);
+  }
+}
+
+:root[data-theme="dark"] {
+  --ink:       #E7EDF3;
+  --ink-soft:  #94A3B2;
+  --paper:     #0E1217;
+  --chip:      #1A212A;
+  --line:      #262F3A;
+  --live:      #35D07F;
+  --grid-line: rgba(231, 237, 243, 0.05);
+}
+
 
 /* ---------- reset ---------- */
 *, *::before, *::after { box-sizing: border-box; }
@@ -41,9 +73,16 @@ body {
   font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: var(--ink);
   background: var(--paper);
+  transition: background-color 0.3s ease, color 0.3s ease;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  position: relative;
+
+  /* red dot pointer — an inline SVG circle, hotspot at its centre.
+     `auto` is the fallback if a browser rejects the image. */
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='7' fill='%23DF2121'/%3E%3C/svg%3E") 10 10, auto;
 }
+
 
 a { color: inherit; text-decoration: none; }
 
@@ -62,26 +101,60 @@ a { color: inherit; text-decoration: none; }
   top: 1rem;
   z-index: 10;
   background: var(--ink);
-  color: #fff;
+  color: var(--paper);
   padding: 0.6rem 1rem;
   border-radius: var(--radius-sm);
 }
 
 /* ---------- shared wordmark ---------- */
 .logo {
-  font-weight: 700;
+  font-weight: 500;
   font-size: 1.0625rem;
   line-height: 1.15;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.04em;
+}
+
+/* ============================================================
+   HEADER GRID
+   A faint square grid sitting behind the nav and hero. Two
+   1px gradients tiled at 26px make the lines; the mask fades
+   them out progressively in every direction so the grid never
+   meets an edge — it just dissolves into the page.
+   ============================================================ */
+/* the grid paint itself, shared by both places it appears */
+.grid-lines,
+.lower::before {
+  background-image:
+    linear-gradient(to right,  var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+/* behind the nav and hero */
+.grid-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: clamp(26rem, 88vh, 52rem);
+  -webkit-mask-image: radial-gradient(ellipse 92% 78% at 50% 34%,
+                        #000 0%, rgba(0, 0, 0, 0.62) 55%, transparent 88%);
+          mask-image: radial-gradient(ellipse 92% 78% at 50% 34%,
+                        #000 0%, rgba(0, 0, 0, 0.62) 55%, transparent 88%);
 }
 
 /* ============================================================
    NAV
    ============================================================ */
 .nav {
+  position: relative;   /* lift above .grid-lines */
+  z-index: 1;
+
   max-width: var(--shell);
   margin: 0 auto;
   padding: 2.25rem var(--gutter);
+  padding-right: calc(var(--gutter) + 3.25rem);  /* room for the floating switch */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -98,7 +171,49 @@ a { color: inherit; text-decoration: none; }
 .nav-links a { transition: color 0.15s ease; }
 .nav-links a:hover { color: var(--ink); }
 
+/* Sun / moon theme switch — floats at the top right, fixed so it rides
+   along on scroll. Stacked vertically. */
+.theme-toggle {
+  position: fixed;
+  top: 2.25rem;                /* matches the nav.s top padding */
+  right: 1.25rem;
+  z-index: 50;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.125rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.1875rem;
+  background: var(--paper);
+  box-shadow: 0 6px 18px rgba(46, 56, 66, 0.12);
+}
+
+.theme-btn {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: inherit;              /* keep the red dot pointer */
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.theme-btn svg { width: 15px; height: 15px; display: block; }
+
+.theme-btn:hover { color: var(--ink); }
+
+.theme-btn[aria-pressed="true"] {
+  background: var(--chip);
+  color: var(--ink);
+}
+
 .status {
+
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -135,14 +250,92 @@ a { color: inherit; text-decoration: none; }
 }
 
 .hero h1 {
-  font-size: clamp(2.25rem, 5.4vw, 4rem);
+  font-size: clamp(2rem, 4.6vw, 3rem);
   font-weight: 300;
   line-height: 1.14;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.04em;
   margin-bottom: 2rem;
 }
 
-.hero h1 strong { font-weight: 700; }
+.hero h1 strong { font-weight: 500; }
+
+/* ---- hero entrance ----------------------------------------------
+   Each headline line sits in its own overflow:hidden mask and rises
+   into place from below it. The padding/negative-margin pair stops
+   the mask from shearing descenders off the p, y and x. -------- */
+.hero h1 .line,
+.cs-title .line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+
+.hero h1 .line-in,
+.cs-title .line-in { display: block; }
+
+/* The entrance is held until the page is genuinely ready to look at.
+   Left ungated it fires at first render, which on a heavy page means it
+   is over before anything reaches the screen. `.js-hero` scopes the
+   hidden state to a page whose script is running, so with no JS nothing
+   is ever left invisible. */
+.js-hero .hero h1 .line-in,
+.js-hero .cs-title .line-in { transform: translateY(115%); }
+
+.js-hero .tags li,
+.js-hero .intro,
+.js-hero .theme-toggle { opacity: 0; }
+
+.js-hero.is-ready .hero h1 .line-in,
+.js-hero.is-ready .cs-title .line-in {
+  animation: line-rise 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.js-hero.is-ready .hero h1 .line:nth-child(2) .line-in,
+.js-hero.is-ready .cs-title .line:nth-child(2) .line-in { animation-delay: 0.13s; }
+
+@keyframes line-rise {
+  to { transform: translateY(0); }
+}
+
+/* the tags and the paragraph follow the headline up */
+@keyframes rise-fade {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.js-hero.is-ready .tags li {
+  animation: rise-fade 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.js-hero.is-ready .tags li:nth-child(1) { animation-delay: 0.46s; }
+.js-hero.is-ready .tags li:nth-child(2) { animation-delay: 0.53s; }
+.js-hero.is-ready .tags li:nth-child(3) { animation-delay: 0.60s; }
+.js-hero.is-ready .tags li:nth-child(4) { animation-delay: 0.67s; }
+
+.js-hero.is-ready .intro {
+  animation: rise-fade 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.76s both;
+}
+
+/* the floating switch drops in last, once the hero has settled */
+.js-hero.is-ready .theme-toggle {
+  animation: rise-fade 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.9s both;
+}
+
+/* ---- scroll reveals ---------------------------------------------
+   Scoped to .js-reveal, which the script only sets once it knows it
+   can reveal them again — without JS nothing is ever hidden.
+   `backwards` fill covers the stagger delay; deliberately not
+   `forwards`, so the finished element goes back to its own styles
+   and .card:hover keeps its own faster transform. ---------------- */
+.js-reveal .reveal { opacity: 0; }
+
+.js-reveal .reveal.is-in {
+  opacity: 1;
+  animation: rise-fade 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+
 
 .tags {
   display: flex;
@@ -176,23 +369,65 @@ a { color: inherit; text-decoration: none; }
   pointer-events: none;
 }
 
+/* Each icon PNG supplies its own tile, shadow and rotation —
+   these rules place, size and animate them.
+
+   Two animations run in sequence on each tile: `tile-pop` scales it in
+   from nothing, then `tile-float` takes over and drifts forever. The
+   float is delayed by exactly the pop's duration, and because it is
+   listed second it wins control of `transform` the moment it starts.
+   Per-tile drift is tuned with the custom properties below so the four
+   tiles never move in lockstep. */
 .tile {
   position: absolute;
   display: block;
-  width: 3.75rem;
-  height: 3.75rem;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(46, 56, 66, 0.10);
-  overflow: hidden;
+  width: 4.25rem;
+  height: 4.25rem;
+  object-fit: contain;
+  opacity: 0;
+  will-change: transform;
+  animation:
+    tile-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) var(--pop-delay) both,
+    tile-float var(--float-dur) ease-in-out calc(var(--pop-delay) + 0.55s) infinite;
 }
 
-.tile img { width: 100%; height: 100%; object-fit: contain; }
+@keyframes tile-pop {
+  from { opacity: 0; transform: scale(0); }
+  to   { opacity: 1; transform: scale(1); }
+}
 
-.tile-1 { top: 0;    left: 8%;  transform: rotate(-11deg); }
-.tile-2 { top: 18%;  left: 44%; transform: rotate(9deg); }
-.tile-3 { top: 42%;  left: 26%; transform: rotate(-7deg); }
-.tile-4 { top: 62%;  left: 62%; transform: rotate(13deg); }
+/* Drift and breath share one keyframe because they share `transform` —
+   two separate animations on the same property would not compose, the
+   later one would simply win. Scale peaks at the quarter points while
+   the drift peaks at the half, so the breath reads as its own rhythm
+   rather than pulsing in lockstep with the rise and fall. */
+@keyframes tile-float {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(calc(var(--lift) * 0.5))
+               rotate(calc(var(--tilt) * 0.5))
+               scale(var(--grow));
+  }
+  50% {
+    transform: translateY(var(--lift)) rotate(var(--tilt)) scale(1);
+  }
+  75% {
+    transform: translateY(calc(var(--lift) * 0.5))
+               rotate(calc(var(--tilt) * 0.5))
+               scale(var(--grow));
+  }
+  100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+}
+
+/* position | pop order | drift speed, distance and tilt */
+.tile-1 { top: 0;    left: 8%;  --pop-delay: 0s;    --float-dur: 6.5s; --lift: -12px; --tilt:  3deg; --grow: 1.065; }
+.tile-2 { top: 18%;  left: 44%; --pop-delay: 0.12s; --float-dur: 5.4s; --lift:  -9px; --tilt: -4deg; --grow: 1.05; }
+.tile-3 { top: 42%;  left: 26%; --pop-delay: 0.24s; --float-dur: 7.2s; --lift: -14px; --tilt:  2deg; --grow: 1.075; }
+.tile-4 { top: 62%;  left: 62%; --pop-delay: 0.36s; --float-dur: 6.0s; --lift: -10px; --tilt: -3deg; --grow: 1.055; }
 
 /* ============================================================
    WORK GRID
@@ -220,21 +455,99 @@ a { color: inherit; text-decoration: none; }
   transition: transform 0.25s ease;
 }
 
-.card:hover { transform: translateY(-4px); }
+/* hover lift now travels through --lift, composed with the tilt below */
 
 .card img { width: 100%; height: 100%; object-fit: cover; }
+
+/* "View case study" pill, revealed on hover or keyboard focus.
+   Two classes beat the `.card img` rule above, which would
+   otherwise stretch the pill to fill the whole card. */
+.card .card-cta {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(8.5rem, 34%, 12rem);
+  height: auto;
+  object-fit: contain;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.94);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+  z-index: 2;               /* above the scrim */
+}
+
+.card:hover .card-cta,
+.card:focus-visible .card-cta {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* ---- hover caption ----------------------------------------------
+   A scrim washes in from the bottom so white text stays readable
+   over whatever the case-study image happens to be, then the label
+   and title rise into place over it. ------------------------------ */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top,
+                rgba(8, 12, 16, 0.74) 0%,
+                rgba(8, 12, 16, 0.28) 38%,
+                rgba(8, 12, 16, 0) 68%);
+  opacity: 0;
+  transition: opacity 0.28s ease;
+  pointer-events: none;
+}
+
+.card:hover::after,
+.card:focus-visible::after { opacity: 1; }
+
+.card-meta {
+  position: absolute;
+  left: 1.375rem;
+  right: 1.375rem;
+  bottom: 1.25rem;
+  z-index: 2;               /* above the scrim */
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  color: #fff;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.28s ease, transform 0.28s ease;
+  pointer-events: none;
+}
+
+.card:hover .card-meta,
+.card:focus-visible .card-meta {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.card-eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.card-title {
+  font-size: 1.0625rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+
 
 /* heights roughly matching the Figma rhythm */
 .card-tall  { aspect-ratio: 4 / 3.7; }
 .card-mid   { aspect-ratio: 4 / 2.9; }
 .card-short { aspect-ratio: 4 / 2.4; }
 
-/* placeholder gradients — delete once real images are in */
-.grad-blue   { background: linear-gradient(150deg, #B7CBFA, #7E9DEC); }
-.grad-sage   { background: linear-gradient(150deg, #DCEBCB, #C3DCAA); }
-.grad-sand   { background: linear-gradient(150deg, #F7EAE4, #EAD5CC); }
-.grad-lilac  { background: linear-gradient(150deg, #ECE4F8, #D3C6EF); }
-.grad-violet { background: linear-gradient(150deg, #BE97ED, #8A68C9); }
+/* placeholder for the one card still without an image (match-details).
+   Delete this rule and .card-note below once that image is in. */
 .grad-sky    { background: linear-gradient(150deg, #B4CBFA, #7FA6EE); }
 
 .card-note {
@@ -243,13 +556,14 @@ a { color: inherit; text-decoration: none; }
   display: grid;
   place-items: center;
   font-size: 0.8125rem;
-  color: rgba(46, 56, 66, 0.45);
+  color: var(--ink-soft);
 }
 
 /* ============================================================
    ARCHIVE + REVIEWS
    ============================================================ */
 .lower {
+  position: relative;
   max-width: var(--shell);
   margin: 0 auto;
   padding: clamp(5rem, 12vw, 10rem) var(--gutter);
@@ -258,10 +572,31 @@ a { color: inherit; text-decoration: none; }
   gap: clamp(2.5rem, 6vw, 5rem);
 }
 
+/* Absolutely positioned so it stays out of the grid layout — an
+   in-flow ::before would become a grid item and claim a column.
+   Centred fade, since this block is its own visual field. */
+.lower::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: radial-gradient(ellipse 92% 82% at 50% 50%,
+                        #000 0%, rgba(0, 0, 0, 0.62) 58%, transparent 90%);
+          mask-image: radial-gradient(ellipse 92% 82% at 50% 50%,
+                        #000 0%, rgba(0, 0, 0, 0.62) 58%, transparent 90%);
+}
+
+/* lift the two columns above that layer */
+.archive,
+.reviews {
+  position: relative;
+  z-index: 1;
+}
+
 .lower h2 {
+
   font-size: clamp(1.5rem, 2.6vw, 2rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-weight: 500;
+  letter-spacing: -0.04em;
   margin-bottom: 2.25rem;
 }
 
@@ -377,4 +712,348 @@ a { color: inherit; text-decoration: none; }
     animation-duration: 0.01ms !important;
   }
   .card:hover { transform: none; }
+
+  /* show the tiles outright rather than cycling them at 0.01ms */
+  .tile { animation: none; opacity: 1; }
+
+  /* likewise, never leave a revealed element stranded at opacity 0 */
+  .js-reveal .reveal { opacity: 1; }
+
+  .js-hero .hero h1 .line-in,
+  .js-hero .cs-title .line-in { transform: none; }
+
+  .js-hero .tags li,
+  .js-hero .intro,
+  .js-hero .theme-toggle { opacity: 1; }
+}
+
+/* ============================================================
+   CASE STUDY PAGE
+   Shares every token, the nav, the grid layer and the theme
+   switch with the home page. Only the reading layout is new.
+   ============================================================ */
+.cs-hero {
+  position: relative;
+  z-index: 1;
+  max-width: var(--shell);
+  margin: 0 auto;
+  padding: clamp(1rem, 3vw, 2rem) var(--gutter) clamp(2.5rem, 5vw, 3.5rem);
+}
+
+.cs-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+  color: var(--ink-soft);
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  transition: color 0.15s ease;
+}
+
+.cs-back svg { width: 16px; height: 16px; }
+.cs-back:hover { color: var(--ink); }
+
+.cs-title {
+  font-size: clamp(1.875rem, 4vw, 2.75rem);
+  font-weight: 300;
+  line-height: 1.16;
+  letter-spacing: -0.04em;
+  max-width: 20ch;
+  margin-bottom: 1.75rem;
+}
+
+.cs-title strong { font-weight: 500; }
+
+.cs-lede {
+  color: var(--ink-soft);
+  font-size: clamp(1rem, 1.4vw, 1.125rem);
+  line-height: 1.75;
+  max-width: 46rem;
+}
+
+/* the four facts, sitting on a rule like a spec sheet */
+.cs-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 1.75rem clamp(1.5rem, 3vw, 3rem);
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  padding-top: 2rem;
+  border-top: 1px solid var(--line);
+}
+
+.cs-meta dt {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 0.5rem;
+}
+
+.cs-meta dd {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+/* ---------- figures ---------- */
+.cs-figure {
+  position: relative;
+  z-index: 1;
+  max-width: var(--shell);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.cs-figure img {
+  width: 100%;
+  border-radius: var(--radius-md);
+}
+
+.cs-figure-lead { margin-bottom: clamp(3.5rem, 8vw, 6rem); }
+
+/* ---------- reading column ----------
+   Held to a comfortable measure rather than the full shell —
+   long-form prose needs a shorter line than a work grid does. */
+.cs-body {
+  position: relative;
+  z-index: 1;
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.cs-section { margin-bottom: clamp(3rem, 6vw, 4.5rem); }
+
+.cs-section h2 {
+  font-size: clamp(1.375rem, 2.2vw, 1.75rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  margin-bottom: 1.25rem;
+}
+
+.cs-section h3 {
+  font-size: 1.0625rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin: 2.5rem 0 0.875rem;
+}
+
+.cs-section p {
+  color: var(--ink-soft);
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+}
+
+.cs-list {
+  margin: 0 0 1.5rem;
+  padding: 0;
+}
+
+.cs-list li {
+  position: relative;
+  color: var(--ink-soft);
+  font-size: 1rem;
+  line-height: 1.8;
+  padding-left: 1.5rem;
+  margin-bottom: 0.625rem;
+}
+
+/* a small dash rather than a bullet — quieter next to the prose */
+.cs-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.85em;
+  width: 0.6rem;
+  height: 1px;
+  background: var(--ink-soft);
+  opacity: 0.6;
+}
+
+/* ---------- closing call to action ---------- */
+.cs-cta {
+  position: relative;
+  z-index: 1;
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: clamp(3rem, 7vw, 5rem) var(--gutter) clamp(1rem, 3vw, 2rem);
+  text-align: center;
+}
+
+.cs-cta h2 {
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  margin-bottom: 0.75rem;
+}
+
+.cs-cta-sub {
+  color: var(--ink-soft);
+  font-size: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.cs-cta-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: clamp(2rem, 5vw, 3rem);
+  background: var(--chip);
+}
+
+.cs-cta-label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 1.25rem;
+}
+
+.cs-cta-line {
+  font-size: 1.125rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+
+.cs-cta-mail {
+  display: inline-block;
+  font-size: 1.125rem;
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 2px;
+  margin-bottom: 1.5rem;
+  transition: border-color 0.15s ease;
+}
+
+.cs-cta-mail:hover { border-color: var(--ink); }
+
+.cs-cta-note {
+  color: var(--ink-soft);
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  max-width: 34rem;
+  margin: 0 auto;
+}
+
+@media (max-width: 560px) {
+  .cs-meta { gap: 1.5rem; }
+}
+
+/* ============================================================
+   SMOOTH SCROLL (Lenis)
+   Lenis needs these to hand scrolling over cleanly.
+   ============================================================ */
+html.lenis,
+html.lenis body { height: auto; }
+
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* ============================================================
+   CUSTOM CURSOR
+   The CSS red dot on <body> stays as the fallback. Only when the
+   script confirms a fine pointer does it set .js-cursor, hide the
+   native cursor and take over with a real element that can scale
+   and drift. Touch devices and no-JS never lose their pointer.
+   ============================================================ */
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;         /* centre on the hotspot */
+  border-radius: 50%;
+  background: #DF2121;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.2s ease,
+              width 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+              height 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+              margin 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+              background-color 0.22s ease;
+}
+
+html.js-cursor .cursor-dot { opacity: 1; }
+
+/* grown into a ring over anything interactive */
+.cursor-dot.is-over {
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  background: rgba(223, 33, 33, 0.18);
+}
+
+html.js-cursor,
+html.js-cursor body,
+html.js-cursor a,
+html.js-cursor button { cursor: none; }
+
+/* a real pointer only — never take the cursor away on touch */
+@media (hover: none), (pointer: coarse) {
+  .cursor-dot { display: none; }
+  html.js-cursor,
+  html.js-cursor body,
+  html.js-cursor a,
+  html.js-cursor button { cursor: auto; }
+}
+
+/* ============================================================
+   LINK UNDERLINES
+   Wipe in from the left rather than blinking on.
+   ============================================================ */
+.nav-links a,
+.footer-links a,
+.cs-back {
+  position: relative;
+}
+
+.nav-links a::after,
+.footer-links a::after,
+.cs-back::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-links a:hover::after,
+.footer-links a:hover::after,
+.cs-back:hover::after,
+.nav-links a:focus-visible::after,
+.footer-links a:focus-visible::after { transform: scaleX(1); }
+
+/* ============================================================
+   CARD TILT
+   The angles come from JS as custom properties, so the whole
+   transform stays composed in one place — hover lift included.
+   ============================================================ */
+.card {
+  transform: perspective(900px)
+             rotateX(var(--rx, 0deg))
+             rotateY(var(--ry, 0deg))
+             translateY(var(--lift, 0px));
+  transition: transform 0.18s ease-out;
+}
+
+.card:hover { --lift: -4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .card { transform: none; }
+  .cursor-dot { display: none; }
+  html.js-cursor,
+  html.js-cursor body,
+  html.js-cursor a,
+  html.js-cursor button { cursor: auto; }
 }

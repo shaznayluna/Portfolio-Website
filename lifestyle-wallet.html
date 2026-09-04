@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fan Wallet — Lifestyle Banking for a Football Club | Shaznay Luna</title>
+<meta name="description" content="A mobile lifestyle banking app blending payments, savings, loyalty, tickets and digital collectibles into a single club-branded experience. Investor-ready MVP prototype.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Smooth scrolling. Pinned; the cursor and tilt work without it. -->
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="script.js"></script>
+
+<div class="cursor-dot" aria-hidden="true"></div>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- Decorative grid behind the header and hero. Purely visual. -->
+<div class="grid-lines" aria-hidden="true"></div>
+
+<!-- Floating theme switch. Fixed to the viewport, so it stays put on scroll. -->
+<div class="theme-toggle" role="group" aria-label="Colour theme">
+  <button type="button" class="theme-btn" data-set-theme="light" aria-pressed="true" aria-label="Light mode">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+  </button>
+  <button type="button" class="theme-btn" data-set-theme="dark" aria-pressed="false" aria-label="Dark mode">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+  </button>
+</div>
+
+<header class="nav">
+  <a class="logo" href="index.html">shaznay<br>luna</a>
+
+  <nav class="nav-links" aria-label="Main">
+    <a href="index.html#work">Work</a>
+    <a href="index.html#about">About</a>
+    <a href="index.html#fun">What I do for fun</a>
+    <a href="index.html#resume">Resume</a>
+  </nav>
+
+  <p class="status"><span class="status-dot" aria-hidden="true"></span>Available to work</p>
+</header>
+
+<main id="main">
+
+  <!-- ============ CASE STUDY HERO ============ -->
+  <section class="cs-hero">
+    <a class="cs-back" href="index.html#work">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back
+    </a>
+
+    <h1 class="cs-title">
+      <span class="line"><span class="line-in">Fan Wallet — <strong>Lifestyle Banking</strong></span></span>
+      <span class="line"><span class="line-in">for a Football Club</span></span>
+    </h1>
+
+    <p class="cs-lede">
+      Turning everyday banking into part of the matchday ritual. A mobile &ldquo;lifestyle
+      banking&rdquo; app that blends a fully-featured fan wallet — payments, savings, loyalty,
+      tickets and digital collectibles — into a single, club-branded experience.
+      Designed as an investor-ready MVP prototype.
+    </p>
+
+    <dl class="cs-meta">
+      <div class="cs-meta-item">
+        <dt>Role</dt>
+        <dd>Product / UX Designer (freelance)</dd>
+      </div>
+      <div class="cs-meta-item">
+        <dt>Duration</dt>
+        <dd>~8 weeks (16 April – 13 June 2025)</dd>
+      </div>
+      <div class="cs-meta-item">
+        <dt>Project Type</dt>
+        <dd>Investor MVP — end-to-end interactive prototype</dd>
+      </div>
+      <div class="cs-meta-item">
+        <dt>Process</dt>
+        <dd>Straight from the client&rsquo;s PRD to high-fidelity design and prototype — no wireframing stage</dd>
+      </div>
+    </dl>
+  </section>
+
+  <!-- ============ HERO IMAGE ============ -->
+  <figure class="cs-figure cs-figure-lead reveal">
+    <img src="images/wallet-app.png" alt="Fan wallet app screens showing an account balance, quick actions, recent transactions and match details">
+  </figure>
+
+  <!-- ============ BODY ============ -->
+  <div class="cs-body">
+
+    <section class="cs-section reveal">
+      <h2>Overview</h2>
+      <p>
+        Most fans interact with their football club through a patchwork of apps: one for
+        tickets, one for the shop, a loyalty card, a separate banking app, a betting app,
+        a payment wallet. Each is a separate login, a separate balance, a separate moment
+        of friction.
+      </p>
+      <p>
+        I was brought in to help design the opposite of that — a single app where the
+        fan&rsquo;s money and their fandom live in the same place. Salary lands, bills get
+        sorted into &ldquo;pots,&rdquo; matchday tickets sit in a wallet, loyalty points buy
+        real perks, and the trophies a fan earns by showing up are theirs to keep, show off,
+        or sell.
+      </p>
+      <p>
+        The product sat at an unusual intersection: a regulated banking product with the
+        emotional pull of a club membership and the playfulness of a game. My job was to
+        make all three feel like one thing.
+      </p>
+    </section>
+
+    <section class="cs-section reveal">
+      <h2>The problem</h2>
+      <p>
+        Qorbital had a compelling thesis — that brands with passionate audiences can deepen
+        loyalty (and lifetime value) by owning the everyday banking relationship, not just
+        the occasional transaction. But a thesis isn&rsquo;t a product. The challenge was to
+        prove, in a tappable prototype, that:
+      </p>
+      <ul class="cs-list">
+        <li>A fan would actually want their bank account to live inside a club app.</li>
+        <li>
+          A genuinely deep feature set (accounts, payments, FX, savings, loyalty, ticketing,
+          collectibles) could be made to feel simple, not overwhelming.
+        </li>
+        <li>
+          Banking moments could be reframed as fandom moments without feeling gimmicky or
+          manipulative.
+        </li>
+      </ul>
+      <p>
+        This was an MVP built to win investor and stakeholder confidence, so every screen
+        had to read as both credible as a bank and delightful as a fan product.
+      </p>
+    </section>
+
+    <section class="cs-section reveal">
+      <h2>Who I was designing for</h2>
+      <p>
+        The primary user was a committed, mobile-first fan — someone who already spends on
+        tickets, kit, travel and matchday rounds, and who organises group activities
+        (five-a-side, away trips, pub kitties) with friends. They&rsquo;re motivated by
+        belonging and status, comfortable with everyday fintech (Apple Pay, round-ups,
+        splitting bills), and impatient with clunky processes.
+      </p>
+      <p>
+        I anchored the design around a single day in this fan&rsquo;s life — waking up,
+        organising a game with friends, heading to a match, and getting home — and used that
+        narrative to pressure-test whether the features actually fit how a fan moves through
+        their day, rather than designing screens in isolation.
+      </p>
+    </section>
+
+    <section class="cs-section reveal">
+      <h2>My role &amp; approach</h2>
+      <p>
+        As the product/UX designer I owned the experience end to end: information
+        architecture, user flows, interaction design, the design system, and a
+        high-fidelity, fully interactive Figma prototype.
+      </p>
+      <p>
+        This was fast-paced client work on a tight timeline — roughly eight weeks. To move
+        at that speed we skipped the usual low-fidelity wireframing stage and went straight
+        from the client&rsquo;s PRD to high-fidelity design and prototype. That made building
+        a design system early a necessity, not a luxury: a shared library of components,
+        tokens and patterns was the only way to design a product this broad, keep it
+        visually consistent, and still iterate fast enough to hit the deadline. The system
+        became the foundation everything else was assembled from — every flow below was
+        built from the same set of reusable parts.
+      </p>
+    </section>
+
+    <section class="cs-section reveal">
+      <h2>The core design challenge</h2>
+      <p>
+        The hardest problem wasn&rsquo;t any single screen — it was coherence. A banking app,
+        a loyalty scheme, a ticketing platform and an NFT collection each come with their own
+        conventions and mental models. Bolted together, they&rsquo;d feel like four apps in a
+        trench coat.
+      </p>
+      <p>
+        I treated the wallet as the spine of the whole product. Money, points, tickets and
+        collectibles are all just things you hold — so I designed a consistent
+        &ldquo;asset&rdquo; model and a unified statement (a &ldquo;lifestyle statement&rdquo;)
+        where a season-ticket entry, a round-up into a savings pot, and loyalty points earned
+        all read as part of one continuous story. That single decision is what let the breadth
+        feel like depth instead of clutter.
+      </p>
+    </section>
+
+    <section class="cs-section reveal">
+      <h2>Key flows I designed</h2>
+
+      <h3>The wallet &amp; &ldquo;lifestyle statement&rdquo;</h3>
+      <p>
+        The home of the product. Balance, cards (digital and physical, controllable
+        separately), and a transaction feed that goes beyond debits and credits — showing
+        ticket spends, loyalty earned, round-ups, and itemised purchase detail where
+        integrated. I designed it to feel like a bank statement that finally understands
+        the user: every line connects to something they actually did as a fan.
+      </p>
+
+      <h3>Rewards &amp; loyalty</h3>
+      <p>
+        Points earned through spending and engagement unlock tangible perks — early ticket
+        access, exclusive kit drops, sponsor discounts applied automatically at point of
+        sale. I designed loyalty as a clear, legible progression (&ldquo;you&rsquo;re 20
+        points from qualifying for the away game — here&rsquo;s how to earn them&rdquo;)
+        rather than an opaque points balance, so the reward always felt within reach and the
+        path to it was obvious.
+      </p>
+
+      <h3>Pots — shared and personal money goals</h3>
+      <p>
+        Round-up savings toward a goal (with an estimated &ldquo;you&rsquo;ll hit this
+        by…&rdquo; date), automatic bill pots on payday, and — the social heart of the
+        feature — group pots for things like a five-a-side team kitty or an away-trip fund.
+        Members can see contributions and spending in real time, send one-tap payment nudges
+        to the friend who hasn&rsquo;t paid, and watch unspent funds auto-refund
+        proportionally when a pot closes. I spent a lot of time here on transparency and
+        trust: shared money is socially fraught, so the design makes &ldquo;who paid, who
+        owes, where it went&rdquo; unambiguous at a glance.
+      </p>
+
+      <h3>Matchday tickets &amp; the Season-Ticket Exchange</h3>
+      <p>
+        Tickets live in the wallet as assets. The flow I&rsquo;m proudest of is the exchange,
+        which solves a real fan problem: a season-ticket holder who can&rsquo;t make a game.
+        From the ticket, a holder can:
+      </p>
+      <ul class="cs-list">
+        <li>Transfer directly to a named friend,</li>
+        <li>List it in an exchange pool (set a price, or give it free), or</li>
+        <li>Donate it to the club for a community or youth cause.</li>
+      </ul>
+      <p>
+        I mapped the full lifecycle, including the edge cases that make or break trust in a
+        transfer system: ticket states moving from held → pending → transferred, anonymous
+        vs. named listings, claim limits, and auto-revert if a listed ticket goes unclaimed
+        close to kickoff. Designing the unhappy paths as carefully as the happy one is what
+        made this feel like infrastructure rather than a demo.
+      </p>
+
+      <h3>The Trophy Room — fandom as a collection</h3>
+      <p>
+        The feature that most captured the emotional pitch. Fans earn digital collectibles —
+        numbered matchday-shirt tokens, attendance awards (e.g. consecutive home games),
+        memorabilia — which land in a personal trophy room. Each item is genuinely owned: a
+        fan can reveal or hide their name on it, look up its edition number, and list it for
+        sale or transfer to others, with the platform brokering the exchange safely.
+      </p>
+      <p>
+        I designed this to feel like a display cabinet, not a crypto wallet — the value on
+        screen is status and memory, with the financial mechanics tucked quietly underneath.
+        The privacy toggle (reveal/hide ownership) was a deliberate choice: collecting is
+        social, but only on the fan&rsquo;s terms.
+      </p>
+    </section>
+
+    <section class="cs-section reveal">
+      <h2>Outcome</h2>
+      <p>
+        I delivered a reusable Figma design system and a complete, high-fidelity,
+        interactive prototype spanning onboarding, the wallet, rewards, the ticket exchange
+        and the trophy room — enough for stakeholders to walk the full &ldquo;day in the
+        life&rdquo; of a fan and for Qorbital to use in investor conversations. Working
+        straight from the PRD, the whole thing came together in roughly eight weeks. The work
+        translated a broad, abstract &ldquo;lifestyle banking&rdquo; thesis into something
+        concrete people could tap, react to, and believe in.
+      </p>
+      <p>
+        Most importantly, the prototype did its job as a fundraising asset. Qorbital took it
+        into investor meetings and, shortly after delivery, reported strong momentum toward
+        securing the investment needed to take the product forward — a clear signal that the
+        design made the vision credible to the people who needed to back it.
+      </p>
+    </section>
+
+  </div>
+
+  <!-- ============ CTA ============ -->
+  <section class="cs-cta reveal">
+    <h2>Interested in working together?</h2>
+    <p class="cs-cta-sub">Shoot me an email if you&rsquo;d like to chat.</p>
+
+    <div class="cs-cta-card">
+      <p class="cs-cta-label">Email</p>
+      <p class="cs-cta-line">Got a project? Say Hello!</p>
+      <a class="cs-cta-mail" href="mailto:shaznayluna@gmail.com">shaznayluna@gmail.com</a>
+      <p class="cs-cta-note">
+        I&rsquo;m always up for good conversations about product design, complex problems, or
+        new opportunities. Don&rsquo;t be a stranger.
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <a class="logo" href="index.html">shaznay<br>luna</a>
+  <nav class="footer-links" aria-label="Elsewhere">
+    <a href="https://www.linkedin.com/in/YOUR-HANDLE" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="mailto:shaznayluna@gmail.com">Say hello on my email :)</a>
+  </nav>
+</footer>
+
+</body>
+</html>
