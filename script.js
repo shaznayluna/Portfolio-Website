@@ -1,10 +1,35 @@
 /* ============================================================
    Shared behaviour for every page.
-   Loaded as a blocking script at the top of <body> so the theme
-   is settled before anything paints.
+
+   This file is loaded as a blocking script at the top of <body>,
+   which is deliberate: the theme has to be settled before the
+   first paint, and the hero has to be marked hidden before it
+   is ever drawn. Both of those run immediately.
+
+   Everything else touches elements further down the document,
+   which do not exist yet at that point — so it goes through
+   onReady(). Querying for them at load time silently returns
+   null and the feature quietly does nothing.
    ============================================================ */
 
-/* ---------- colour theme ---------- */
+function onReady(fn) {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fn);
+  } else {
+    fn();
+  }
+}
+
+function prefersReducedMotion() {
+  return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+}
+
+function hasFinePointer() {
+  return !!(window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches);
+}
+
+/* ---------- colour theme ----------
+   Runs immediately: the theme must be right before anything paints. */
 (function () {
   var root = document.documentElement;
   var KEY = "theme";
@@ -30,6 +55,7 @@
   var saved = read();
   apply(saved === "light" || saved === "dark" ? saved : systemPref());
 
+  /* delegated, so it works for buttons that do not exist yet */
   document.addEventListener("click", function (e) {
     var btn = e.target && e.target.closest && e.target.closest("[data-set-theme]");
     if (!btn) return;
@@ -38,9 +64,37 @@
     write(v);
   });
 
-  document.addEventListener("DOMContentLoaded", function () {
-    sync(root.getAttribute("data-theme"));
-  });
+  onReady(function () { sync(root.getAttribute("data-theme")); });
+}());
+
+/* ---------- hero entrance timing ----------
+   Also immediate, and deliberately high in this file. The hero hides
+   itself until `js-hero` is set, so this must not sit downstream of
+   anything that could throw and stop the script.
+
+   It waits for `load` rather than for fonts: fonts resolve in a few
+   hundred milliseconds, which on a page carrying real imagery is long
+   before the first paint — the entrance would finish before anything
+   reached the screen. The timeout is a backstop, since nothing should
+   keep the headline hidden indefinitely. */
+(function () {
+  var root = document.documentElement;
+  root.classList.add("js-hero");
+
+  var started = false;
+  function start() {
+    if (started) return;
+    started = true;
+    root.classList.add("is-ready");
+  }
+
+  if (document.readyState === "complete") {
+    start();
+  } else {
+    window.addEventListener("load", start);
+  }
+
+  setTimeout(start, 8000);
 }());
 
 /* ---------- scroll reveals ---------- */
@@ -54,7 +108,7 @@
     return i;
   }
 
-  function start() {
+  onReady(function () {
     var els = document.querySelectorAll(".reveal");
     if (!els.length) return;
 
@@ -69,23 +123,8 @@
     }, { rootMargin: "0px 0px -10% 0px", threshold: 0.06 });
 
     for (var j = 0; j < els.length; j++) io.observe(els[j]);
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", start);
-  } else {
-    start();
-  }
+  });
 }());
-
-/* ---------- shared helpers ---------- */
-function prefersReducedMotion() {
-  return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-}
-
-function hasFinePointer() {
-  return !!(window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches);
-}
 
 /* ---------- smooth scrolling ---------- */
 (function () {
@@ -115,7 +154,7 @@ function hasFinePointer() {
 /* ---------- cursor ----------
    Takes over only on a real pointer with motion allowed. Everywhere else
    the CSS red-dot cursor on <body> stays, so nobody loses their pointer. */
-(function () {
+onReady(function () {
   if (!hasFinePointer() || prefersReducedMotion()) return;
 
   var dot = document.querySelector(".cursor-dot");
@@ -123,7 +162,7 @@ function hasFinePointer() {
 
   document.documentElement.classList.add("js-cursor");
 
-  var INTERACTIVE = "a, button, .card, [data-set-theme]";
+  var INTERACTIVE = "a, button, .card, .folder, [data-set-theme]";
   /* only small controls pull the cursor — dragging it to the centre of a
      large card would feel like a bug, not a flourish */
   var MAGNETIC = "button, .nav-links a, .footer-links a, [data-set-theme]";
@@ -159,10 +198,10 @@ function hasFinePointer() {
     dot.style.transform = "translate3d(" + currentX + "px," + currentY + "px,0)";
     requestAnimationFrame(frame);
   }());
-}());
+});
 
 /* ---------- card tilt ---------- */
-(function () {
+onReady(function () {
   if (!hasFinePointer() || prefersReducedMotion()) return;
 
   var MAX_DEG = 5;
@@ -185,27 +224,132 @@ function hasFinePointer() {
     cards[i].addEventListener("pointermove", move, { passive: true });
     cards[i].addEventListener("pointerleave", reset);
   }
-}());
+});
 
-/* ---------- hero entrance timing ----------
-   The hero animation is CSS, but *when* it starts is decided here.
-   Left to the browser it begins at first render, which on a heavy page
-   means it finishes before anything is visible. Waiting for the webfont
-   also avoids the headline animating in a fallback face and then
-   reflowing — but the timeout guarantees it always plays. */
-(function () {
-  var root = document.documentElement;
-  root.classList.add("js-hero");
+/* ---------- progressive scroll blur ----------
+   The band is fixed to the viewport, so left alone it would blur the
+   bottom of every section. It is only wanted over the work grid, so it
+   follows that section in and out of view. */
+onReady(function () {
+  var band = document.querySelector(".scroll-blur");
+  var work = document.querySelector(".work");
+  if (!band || !work || !("IntersectionObserver" in window)) return;
 
-  var started = false;
-  function start() {
-    if (started) return;
-    started = true;
-    root.classList.add("is-ready");
+  var io = new IntersectionObserver(function (entries) {
+    band.classList.toggle("is-on", entries[0].isIntersecting);
+  }, { rootMargin: "0px 0px -10% 0px" });
+
+  io.observe(work);
+});
+
+/* ---------- about dialogs ----------
+   Dormant while the hero cards are out of the markup. Native <dialog>
+   does the heavy lifting when they return: Esc to close, the backdrop,
+   focus trapping and restoring focus to the trigger are all built in. */
+onReady(function () {
+  var openers = document.querySelectorAll("[data-opens]");
+  if (!openers.length) return;
+
+  for (var i = 0; i < openers.length; i++) {
+    openers[i].addEventListener("click", function () {
+      var dialog = document.getElementById(this.getAttribute("data-opens"));
+      if (!dialog) return;
+      if (typeof dialog.showModal === "function") {
+        dialog.showModal();
+      } else {
+        dialog.setAttribute("open", "");
+      }
+    });
   }
 
-  if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
-    document.fonts.ready.then(start).catch(start);
+  document.addEventListener("click", function (e) {
+    if (!e.target || !e.target.closest) return;
+
+    var close = e.target.closest(".fact-close");
+    if (close) {
+      var owner = close.closest("dialog");
+      if (owner) owner.close();
+      return;
+    }
+
+    /* a click landing on the dialog element itself is a click on the
+       backdrop — the inner grid covers everything else */
+    if (e.target.tagName === "DIALOG" && e.target.classList.contains("fact-dialog")) {
+      e.target.close();
+    }
+  });
+});
+
+
+/* ---------- about stack ----------
+   Every card lives in one modal. Whichever folder opened it decides
+   which card starts at the front; from there the cards behind are
+   clickable, the arrows step through, and so do the arrow keys — so
+   nothing is more than one action away once it is open. */
+onReady(function () {
+  var modal = document.getElementById("about-modal");
+  if (!modal) return;
+
+  var cards = [].slice.call(modal.querySelectorAll(".about-card"));
+  if (!cards.length) return;
+
+  var counter = modal.querySelector(".about-count b");
+  var index = 0;
+
+  function render() {
+    for (var i = 0; i < cards.length; i++) {
+      var card = cards[i];
+      /* how far back from the front this card sits, wrapping around */
+      var depth = (i - index + cards.length) % cards.length;
+
+      card.style.setProperty("--o", depth);
+      card.style.zIndex = cards.length - depth;
+      card.setAttribute("data-depth", depth);
+      card.classList.toggle("is-front", depth === 0);
+      /* only the front card is read out; the rest are visual layers */
+      card.setAttribute("aria-hidden", depth === 0 ? "false" : "true");
+    }
+    if (counter) counter.textContent = index + 1;
   }
-  setTimeout(start, 1200);   /* never wait longer than this */
-}());
+
+  function go(step) {
+    index = (index + step + cards.length) % cards.length;
+    render();
+  }
+
+  modal.addEventListener("click", function (e) {
+    if (!e.target.closest) return;
+
+    var stepper = e.target.closest("[data-step]");
+    if (stepper) {
+      go(parseInt(stepper.getAttribute("data-step"), 10));
+      return;
+    }
+
+    /* clicking a card behind brings it forward */
+    var card = e.target.closest(".about-card");
+    if (card && !card.classList.contains("is-front")) {
+      index = cards.indexOf(card);
+      render();
+    }
+  });
+
+  modal.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowRight") { e.preventDefault(); go(1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); go(-1); }
+  });
+
+  /* a folder opens the stack on its own card */
+  document.addEventListener("click", function (e) {
+    var trigger = e.target && e.target.closest ? e.target.closest("[data-card]") : null;
+    if (!trigger || trigger.closest(".about-card")) return;
+
+    var wanted = trigger.getAttribute("data-card");
+    for (var i = 0; i < cards.length; i++) {
+      if (cards[i].getAttribute("data-card") === wanted) { index = i; break; }
+    }
+    render();
+  });
+
+  render();
+});

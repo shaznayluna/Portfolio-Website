@@ -20,6 +20,15 @@
 
 <div class="cursor-dot" aria-hidden="true"></div>
 
+<!-- Progressive blur at the foot of the viewport, switched on only while
+     the work grid is in view. Four stacked layers, each blurring harder
+     and masked a step further down, so the blur ramps instead of starting
+     at a visible edge. -->
+<div class="scroll-blur" aria-hidden="true">
+  <span></span><span></span><span></span><span></span>
+</div>
+
+
 
 <a class="skip-link" href="#main">Skip to content</a>
 
@@ -85,6 +94,55 @@
       <img class="tile tile-3" src="images/tool-icon-02.png" alt="">
       <img class="tile tile-4" src="images/tool-icon-03.png" alt="">
     </div>
+
+    <!-- Floating folders. Both states sit in the DOM rather than swapping a
+         background-image, so the open frame is already decoded when the
+         pointer arrives instead of being fetched on first hover. -->
+    <!-- One icon per folder, not two cross-faded states: the front flap is
+         its own path and tips open on hover, so nothing ever renders
+         semi-transparent over anything else. -->
+    <div class="folders">
+      <button type="button" class="folder folder-wia" data-opens="about-modal" data-card="who">
+        <span class="folder-art">
+          <svg class="folder-icon" viewBox="0 0 64 56" aria-hidden="true">
+            <defs>
+              <linearGradient id="folder-grad-wia" x1="0" y1="0" x2="0" y2="1">
+                <stop class="g-top" offset="0"/>
+                <stop class="g-bot" offset="1"/>
+              </linearGradient>
+            </defs>
+            <path class="folder-body" d="M2 8a6 6 0 0 1 6-6h12a4 4 0 0 1 3.3 1.6L26 13h30a6 6 0 0 1 6 6v27a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6z" fill="url(#folder-grad-wia)"/>
+            <g class="folder-papers">
+              <rect class="paper paper-1" x="19" y="24" width="26" height="22" rx="2" fill="var(--folder-paper)" stroke="rgba(46,56,66,0.12)" stroke-width="0.6"/>
+              <rect class="paper paper-2" x="19" y="24" width="26" height="22" rx="2" fill="var(--folder-paper)" stroke="rgba(46,56,66,0.12)" stroke-width="0.6"/>
+              <rect class="paper paper-3" x="19" y="24" width="26" height="22" rx="2" fill="var(--folder-paper)" stroke="rgba(46,56,66,0.12)" stroke-width="0.6"/>
+            </g>
+            <path class="folder-front" d="M8 20h48a6 6 0 0 1 6 6v20a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6V26a6 6 0 0 1 6-6z" fill="url(#folder-grad-wia)"/>
+          </svg>
+        </span>
+        <span class="folder-label">Who I am</span>
+      </button>
+      <button type="button" class="folder folder-bg" data-opens="about-modal" data-card="background">
+        <span class="folder-art">
+          <svg class="folder-icon" viewBox="0 0 64 56" aria-hidden="true">
+            <defs>
+              <linearGradient id="folder-grad-bg" x1="0" y1="0" x2="0" y2="1">
+                <stop class="g-top" offset="0"/>
+                <stop class="g-bot" offset="1"/>
+              </linearGradient>
+            </defs>
+            <path class="folder-body" d="M2 8a6 6 0 0 1 6-6h12a4 4 0 0 1 3.3 1.6L26 13h30a6 6 0 0 1 6 6v27a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6z" fill="url(#folder-grad-bg)"/>
+            <g class="folder-papers">
+              <rect class="paper paper-1" x="19" y="24" width="26" height="22" rx="2" fill="var(--folder-paper)" stroke="rgba(46,56,66,0.12)" stroke-width="0.6"/>
+              <rect class="paper paper-2" x="19" y="24" width="26" height="22" rx="2" fill="var(--folder-paper)" stroke="rgba(46,56,66,0.12)" stroke-width="0.6"/>
+              <rect class="paper paper-3" x="19" y="24" width="26" height="22" rx="2" fill="var(--folder-paper)" stroke="rgba(46,56,66,0.12)" stroke-width="0.6"/>
+            </g>
+            <path class="folder-front" d="M8 20h48a6 6 0 0 1 6 6v20a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6V26a6 6 0 0 1 6-6z" fill="url(#folder-grad-bg)"/>
+          </svg>
+        </span>
+        <span class="folder-label">Background</span>
+      </button>
+    </div>
   </section>
 
   <!-- ============ WORK GRID ============ -->
@@ -98,7 +156,7 @@
         </span>
         <img class="card-cta" src="images/view-case-study-button.png" alt="" aria-hidden="true">
       </a>
-      <a class="card reveal card-mid" href="#">
+      <a class="card reveal card-mid" href="cyclista.html">
         <img src="images/cyclista.png" alt="Cyclista cycling app screens showing turn-by-turn navigation, onboarding and a ride feed">
         <span class="card-meta">
           <span class="card-eyebrow">Mobile App</span>
@@ -117,7 +175,7 @@
     </div>
 
     <div class="work-col">
-      <a class="card reveal card-short" href="#">
+      <a class="card reveal card-short" href="searcheye.html">
         <img src="images/searcheye.png" alt="SearchEye onboarding wizard shown on a laptop alongside publisher listings">
         <span class="card-meta">
           <span class="card-eyebrow">B2B SaaS</span>
@@ -186,6 +244,90 @@
     </div>
 
   </section>
+
+
+  <!-- ============ CTA ============ -->
+  <section class="cs-cta reveal">
+    <h2>Interested in working together?</h2>
+    <p class="cs-cta-sub">Shoot me an email if you&rsquo;d like to chat.</p>
+
+    <div class="cs-cta-card">
+      <p class="cs-cta-label">Email</p>
+      <p class="cs-cta-line">Got a project? Say Hello!</p>
+      <a class="cs-cta-mail" href="mailto:shaznayluna@gmail.com">shaznayluna@gmail.com</a>
+      <p class="cs-cta-note">
+        I&rsquo;m always up for good conversations about product design, complex problems, or
+        new opportunities. Don&rsquo;t be a stranger.
+      </p>
+    </div>
+  </section>
+
+
+  <!-- ============ ABOUT STACK ============
+       One modal holding every card, rather than a dialog per folder.
+       The cards behind stay visible and clickable, so once it is open
+       everything is reachable without closing and starting again. -->
+  <dialog class="about-modal" id="about-modal" aria-label="About Shaznay">
+    <button class="fact-close" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+
+    <div class="about-stack">
+      <article class="about-card" data-card="who" aria-labelledby="about-who-title">
+        <div class="fact-dialog-inner">
+          <div class="fact-media fact-media-who" aria-hidden="true"><svg viewBox="0 0 64 56" aria-hidden="true"><path d="M2 8a6 6 0 0 1 6-6h12a4 4 0 0 1 3.3 1.6L26 13h30a6 6 0 0 1 6 6v27a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6z" fill="rgba(255,255,255,0.92)"/></svg></div>
+          <div class="fact-panel">
+            <p class="fact-eyebrow">Get to know me</p>
+            <h2 id="about-who-title">Who I am</h2>
+          <p>I&rsquo;m Shaznay, a product designer who turns complex systems into simple user experience.</p>
+          <p>I design in Figma, QA with AI tools, and ship alongside engineers. Currently designing at OpenTrain AI.</p>
+          </div>
+        </div>
+      </article>
+      <article class="about-card" data-card="background" aria-labelledby="about-background-title">
+        <div class="fact-dialog-inner">
+          <div class="fact-media fact-media-background" aria-hidden="true"><svg viewBox="0 0 64 56" aria-hidden="true"><path d="M2 8a6 6 0 0 1 6-6h12a4 4 0 0 1 3.3 1.6L26 13h30a6 6 0 0 1 6 6v27a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6z" fill="rgba(255,255,255,0.92)"/></svg></div>
+          <div class="fact-panel">
+            <p class="fact-eyebrow">How I got here</p>
+            <h2 id="about-background-title">Background</h2>
+          <p>Design system work, whiteboarding and mobile apps &mdash; across both in-house and agency engagements.</p>
+          <p>I designed the B2B SaaS marketplace platform at Searcheye.io, with prior experience shipping mobile and desktop web apps across agency work.</p>
+          </div>
+        </div>
+      </article>
+      <article class="about-card" data-card="home" aria-labelledby="about-home-title">
+        <div class="fact-dialog-inner">
+          <div class="fact-media fact-media-home" aria-hidden="true"><svg viewBox="0 0 64 56" aria-hidden="true"><path d="M2 8a6 6 0 0 1 6-6h12a4 4 0 0 1 3.3 1.6L26 13h30a6 6 0 0 1 6 6v27a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6z" fill="rgba(255,255,255,0.92)"/></svg></div>
+          <div class="fact-panel">
+            <p class="fact-eyebrow">Where I am</p>
+            <h2 id="about-home-title">From the Philippines</h2>
+          <p>Based in the Philippines, working with teams across time zones &mdash; in-house and agency, local and remote.</p>
+          </div>
+        </div>
+      </article>
+      <article class="about-card" data-card="fun" aria-labelledby="about-fun-title">
+        <div class="fact-dialog-inner">
+          <div class="fact-media fact-media-fun" aria-hidden="true"><svg viewBox="0 0 64 56" aria-hidden="true"><path d="M2 8a6 6 0 0 1 6-6h12a4 4 0 0 1 3.3 1.6L26 13h30a6 6 0 0 1 6 6v27a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6z" fill="rgba(255,255,255,0.92)"/></svg></div>
+          <div class="fact-panel">
+            <p class="fact-eyebrow">Away from the screen</p>
+            <h2 id="about-fun-title">What I do for fun</h2>
+          <p>[ Yours to write &mdash; a few lines about what you get up to away from work. ]</p>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="about-nav">
+      <button type="button" data-step="-1" aria-label="Previous">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <p class="about-count"><b>1</b> of 4</p>
+      <button type="button" data-step="1" aria-label="Next">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+  </dialog>
+
 </main>
 
 <footer class="footer" id="resume">
