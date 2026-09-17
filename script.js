@@ -116,7 +116,7 @@ function hasFinePointer() {
   }
 
   onReady(function () {
-    var els = document.querySelectorAll(".reveal");
+    var els = document.querySelectorAll(".reveal, [data-reveal]");  /* Webflow build marks reveals with an attribute */
     if (!els.length) return;
 
     var io = new IntersectionObserver(function (entries) {
@@ -186,6 +186,9 @@ onReady(function () {
   document.addEventListener("pointerover", function (e) {
     var el = e.target && e.target.closest ? e.target.closest(INTERACTIVE) : null;
     dot.classList.toggle("is-over", !!el);
+    /* the folders hand back the native hand cursor, so the dot steps aside */
+    var hand = e.target && e.target.closest ? e.target.closest(".folder") : null;
+    dot.classList.toggle("is-hidden", !!hand);
     magnet = e.target && e.target.closest ? e.target.closest(MAGNETIC) : null;
   });
 
