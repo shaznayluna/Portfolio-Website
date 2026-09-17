@@ -250,7 +250,53 @@ onReady(function () {
   var openers = document.querySelectorAll("[data-opens]");
   if (!openers.length) return;
 
+  /* A dialog opened with showModal() is painted in the browser's top
+     layer, which sits above the whole z-index system — the cursor dot at
+     z-index 9999 still ends up underneath it. The only way to be above a
+     top-layer element is to be inside it, so the dot moves into the
+     dialog on open and back to the body on close. */
+  var dot = document.querySelector(".cursor-dot");
+
+  function liftCursorInto(dialog) {
+    if (dot) dialog.appendChild(dot);
+  }
+
+  function dropCursorBack() {
+    if (dot && dot.parentNode !== document.body) document.body.appendChild(dot);
+  }
+
+  /* A dialog is display:none until it opens, and browsers will not start
+     an autoplaying video that has never been rendered. So play on open
+     rather than relying on the autoplay attribute — and pause on close,
+     since a looping video in a hidden dialog is pure waste. */
+  function playVideos(dialog) {
+    var vids = dialog.querySelectorAll("video");
+    for (var v = 0; v < vids.length; v++) {
+      var p = vids[v].play();
+      if (p && p.catch) p.catch(function () {});   /* blocked autoplay is fine */
+    }
+  }
+
+  function pauseVideos() {
+    var vids = this.querySelectorAll("video");
+    for (var v = 0; v < vids.length; v++) vids[v].pause();
+  }
+
+  var wired = {};
+
   for (var i = 0; i < openers.length; i++) {
+    var id = openers[i].getAttribute("data-opens");
+
+    /* one close handler per dialog, however many things open it */
+    if (id && !wired[id]) {
+      wired[id] = true;
+      var target = document.getElementById(id);
+      if (target) {
+        target.addEventListener("close", dropCursorBack);
+        target.addEventListener("close", pauseVideos);
+      }
+    }
+
     openers[i].addEventListener("click", function () {
       var dialog = document.getElementById(this.getAttribute("data-opens"));
       if (!dialog) return;
@@ -259,6 +305,8 @@ onReady(function () {
       } else {
         dialog.setAttribute("open", "");
       }
+      liftCursorInto(dialog);
+      playVideos(dialog);
     });
   }
 
@@ -293,7 +341,6 @@ onReady(function () {
   var cards = [].slice.call(modal.querySelectorAll(".about-card"));
   if (!cards.length) return;
 
-  var counter = modal.querySelector(".about-count b");
   var index = 0;
 
   function render() {
@@ -309,7 +356,6 @@ onReady(function () {
       /* only the front card is read out; the rest are visual layers */
       card.setAttribute("aria-hidden", depth === 0 ? "false" : "true");
     }
-    if (counter) counter.textContent = index + 1;
   }
 
   function go(step) {
@@ -320,13 +366,8 @@ onReady(function () {
   modal.addEventListener("click", function (e) {
     if (!e.target.closest) return;
 
-    var stepper = e.target.closest("[data-step]");
-    if (stepper) {
-      go(parseInt(stepper.getAttribute("data-step"), 10));
-      return;
-    }
 
-    /* clicking a card behind brings it forward */
+    /* the card behind is the only control now: clicking it steps forward */
     var card = e.target.closest(".about-card");
     if (card && !card.classList.contains("is-front")) {
       index = cards.indexOf(card);

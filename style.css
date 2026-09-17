@@ -901,70 +901,98 @@ a { color: inherit; text-decoration: none; }
   opacity: 0.6;
 }
 
-/* ---------- closing call to action ---------- */
+/* ---------- closing call to action ----------
+   A full-bleed band rather than a centred card: it runs edge to edge
+   while the content inside stays on the page's shell width. The warm
+   left / cool right wash is three layered gradients, since a single
+   linear one cannot bend through the corner tints. ---------- */
 .cs-cta {
   position: relative;
-  z-index: 1;
-  max-width: 46rem;
+  max-width: none;
+  margin: clamp(4rem, 9vw, 7rem) 0 0;
+  padding: 0;
+  text-align: left;
+  overflow: hidden;          /* the artwork bleeds off the right edge */
+  background:
+    radial-gradient(75% 130% at 100% 88%, rgba(196, 181, 240, 0.40), transparent 62%),
+    radial-gradient(70% 120% at 96% 18%, rgba(178, 202, 248, 0.48), transparent 66%),
+    linear-gradient(100deg, #FCF5E1 0%, #FEFCF6 28%, #FFFFFF 52%, #F3F6FE 100%);
+}
+
+:root[data-theme="dark"] .cs-cta {
+  background:
+    radial-gradient(75% 130% at 100% 88%, rgba(147, 51, 234, 0.22), transparent 62%),
+    radial-gradient(70% 120% at 96% 18%, rgba(59, 107, 245, 0.22), transparent 66%),
+    linear-gradient(100deg, #1A1710 0%, #12151A 34%, var(--paper) 60%, #121722 100%);
+}
+
+.cta-inner {
+  max-width: var(--shell);
   margin: 0 auto;
-  padding: clamp(3rem, 7vw, 5rem) var(--gutter) clamp(1rem, 3vw, 2rem);
-  text-align: center;
+  padding: clamp(3.5rem, 8vw, 6rem) var(--gutter);
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
 }
 
-.cs-cta h2 {
-  font-size: clamp(1.5rem, 2.6vw, 2rem);
-  font-weight: 500;
+.cta-text h2 {
+  font-size: clamp(1.75rem, 4vw, 3rem);
+  font-weight: 600;
   letter-spacing: -0.04em;
-  margin-bottom: 0.75rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
 }
 
-.cs-cta-sub {
+.cta-text p {
   color: var(--ink-soft);
-  font-size: 1rem;
-  margin-bottom: 2.5rem;
+  font-size: clamp(1rem, 1.3vw, 1.125rem);
+  line-height: 1.75;
+  max-width: 32rem;
+  margin-bottom: 1.75rem;
 }
 
-.cs-cta-card {
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  padding: clamp(2rem, 5vw, 3rem);
-  background: var(--chip);
-}
-
-.cs-cta-label {
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  margin-bottom: 1.25rem;
-}
-
-.cs-cta-line {
-  font-size: 1.125rem;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  margin-bottom: 0.5rem;
-}
-
-.cs-cta-mail {
+.cta-mail {
   display: inline-block;
-  font-size: 1.125rem;
+  font-size: 1.0625rem;
   color: var(--ink);
   border-bottom: 1px solid var(--line);
   padding-bottom: 2px;
-  margin-bottom: 1.5rem;
   transition: border-color 0.15s ease;
 }
 
-.cs-cta-mail:hover { border-color: var(--ink); }
+.cta-mail:hover { border-color: var(--ink); }
 
-.cs-cta-note {
-  color: var(--ink-soft);
-  font-size: 0.9375rem;
-  line-height: 1.75;
-  max-width: 34rem;
-  margin: 0 auto;
+/* Two thumbnails overlapping, the second sitting forward and lower and
+   running past the container so it bleeds off the band's right edge. */
+.cta-art {
+  position: relative;
+  min-height: clamp(14rem, 24vw, 20rem);
+}
+
+.cta-shot {
+  position: absolute;
+  border-radius: 14px;
+  box-shadow: 0 24px 54px rgba(20, 28, 44, 0.20);
+}
+
+.cta-shot-1 {
+  width: 76%;
+  top: 0;
+  left: 0;
+}
+
+.cta-shot-2 {
+  width: 88%;
+  top: 34%;
+  left: 24%;
+}
+
+@media (max-width: 900px) {
+  .cta-inner { grid-template-columns: 1fr; }
+
+  /* stacked, the artwork reads as clutter under the copy */
+  .cta-art { display: none; }
 }
 
 @media (max-width: 560px) {
@@ -1210,7 +1238,9 @@ html.js-cursor button { cursor: none; }
   backdrop-filter: blur(3px);
 }
 
-.about-modal[open] { animation: dialog-in 0.34s cubic-bezier(0.22, 1, 0.36, 1); }
+/* on the stack, not the dialog: a transform on the dialog would become
+   the containing block for the fixed-position cursor inside it */
+.about-modal[open] .about-stack { animation: dialog-in 0.34s cubic-bezier(0.22, 1, 0.36, 1); }
 
 @keyframes dialog-in {
   from { opacity: 0; transform: translateY(14px) scale(0.985); }
@@ -1632,7 +1662,9 @@ html.js-cursor button { cursor: none; }
   background: none;
   font: inherit;
   color: inherit;
-  text-align: inherit;
+  text-align: center;      /* NOT inherit: this block is later in the file
+                              than the rule that centres the label, so
+                              `inherit` here silently left-aligned it */
   cursor: inherit;
   pointer-events: auto;   /* restated: this block is the last word on .folder */
   z-index: 1;
@@ -1677,9 +1709,25 @@ html.js-cursor button { cursor: none; }
 .fact-media {
   border-radius: 16px;
   min-height: 17rem;
+  overflow: hidden;   /* the video corners are square without this */
 }
 
 .fact-media svg { width: 42%; height: auto; }
+
+/* Video and photo both fill their panel; the gradient underneath shows
+   through while they load, so a card never opens on an empty grey box. */
+.fact-media video,
+.fact-media-who img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* The subject sits low in the frame, so a centred crop would cut her off
+   and fill the panel with staircase. Bias the crop downward. */
+.fact-media-who img { object-position: 50% 62%; }
+
 
 .fact-media-who        { background: linear-gradient(150deg, #5B86F8, #3B6BF5); }
 .fact-media-background { background: linear-gradient(150deg, #E4595B, #D53A3D); }
@@ -1730,15 +1778,19 @@ html.js-cursor button { cursor: none; }
 
 .about-stack {
   position: relative;
+  display: grid;
   /* room above for the peeking edges */
   padding-top: 4.5rem;
 }
 
+/* Every card is placed in the same grid cell. The row then takes the
+   height of the tallest one and they all stretch to match, so the stack
+   no longer changes height as you flip between cards with different
+   amounts of copy. Stacking them absolutely could not do this: the
+   parent would size to whichever card happened to be in front. */
 .about-card {
-  position: absolute;
-  top: 4.5rem;
-  left: 0;
-  right: 0;
+  grid-area: 1 / 1;
+  position: relative;
   width: auto;
   max-height: none;
   transform-origin: 50% 0;
@@ -1749,61 +1801,25 @@ html.js-cursor button { cursor: none; }
               opacity 0.42s ease;
 }
 
-/* the front card holds the height; the rest are laid over it */
-.about-card.is-front {
-  position: relative;
-  top: 0;
-}
-
 .about-card:not(.is-front) { cursor: inherit; }
 
-/* deep cards are decoration — do not let them take the pointer */
-.about-card[data-depth="3"] { pointer-events: none; }
-
-.about-nav {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1.5rem;
+/* Only two layers are ever visible: the front card and the one directly
+   behind it, which doubles as the "next" control. Anything deeper is
+   hidden outright rather than dimmed — a third edge would just look like
+   a rendering artefact, and it must not catch the pointer either. */
+.about-card[data-depth="2"],
+.about-card[data-depth="3"] {
+  opacity: 0;
+  pointer-events: none;
 }
 
-.about-nav button {
-  display: grid;
-  place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  padding: 0;
-  border: 1px solid var(--line);
-  border-radius: 50%;
-  background: var(--paper);
-  color: var(--ink-soft);
-  cursor: inherit;
-  transition: color 0.16s ease, border-color 0.16s ease;
-}
+/* the card behind is the affordance, so say so */
+.about-card:not(.is-front) { cursor: inherit; }
 
-.about-nav button svg { width: 16px; height: 16px; }
 
-.about-nav button:hover {
-  color: var(--ink);
-  border-color: var(--ink);
-}
-
-.about-count {
-  font-size: 0.875rem;
-  color: var(--ink-soft);
-  min-width: 4.5rem;
-  text-align: center;
-}
-
-.about-count b {
-  font-weight: 500;
-  color: var(--ink);
-}
 
 @media (max-width: 720px) {
   .about-stack { padding-top: 3rem; }
-  .about-card { top: 3rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
