@@ -36,8 +36,11 @@
 
 html { -webkit-text-size-adjust: 100%; }
 
-:where(body) {
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;  /* zero specificity: the Designer's Body font wins */
+/* Fallback until the Body element carries the `site-body` class in the
+   Designer (select Body, add class "site-body"). Once it does, this rule
+   stops matching and the class owns font, colour and background. */
+body:not(.site-body) {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: var(--ink);
   background: var(--paper);
   transition: background-color 0.3s ease, color 0.3s ease;
