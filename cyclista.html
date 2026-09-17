@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyclista — A Simpler, Safer Cycling Experience | Shaznay Luna</title>
+<meta name="description" content="A concept project exploring how product design can address real-world safety problems for everyday cyclists, including a proximity-based SOS system.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300..700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Smooth scrolling. Pinned; the cursor and tilt work without it. -->
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="script.js"></script>
+
+<div class="cursor-dot" aria-hidden="true"></div>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- Decorative grid behind the header and hero. Purely visual. -->
+<div class="grid-lines" aria-hidden="true"></div>
+
+<!-- Floating theme switch. Fixed to the viewport, so it stays put on scroll. -->
+<div class="theme-toggle" role="group" aria-label="Colour theme">
+  <button type="button" class="theme-btn" data-set-theme="light" aria-pressed="true" aria-label="Light mode">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+  </button>
+  <button type="button" class="theme-btn" data-set-theme="dark" aria-pressed="false" aria-label="Dark mode">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+  </button>
+</div>
+
+<header class="nav">
+  <a class="logo" href="index.html">shaznay<br>luna</a>
+
+  <nav class="nav-links" aria-label="Main">
+    <a href="index.html#work">Work</a>
+    <a href="index.html#about">About</a>
+    <a href="index.html#fun">What I do for fun</a>
+    <a href="index.html#resume">Resume</a>
+  </nav>
+
+  <p class="status"><span class="status-dot" aria-hidden="true"></span>Available to work</p>
+</header>
+
+<main id="main">
+
+  <!-- ============ CASE STUDY HERO ============ -->
+  <section class="cs-hero">
+    <a class="cs-back" href="index.html#work">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back
+    </a>
+
+    <h1 class="cs-title">
+      <span class="line"><span class="line-in">Designing a <strong>Simpler and Safer</strong></span></span>
+      <span class="line"><span class="line-in"><strong>Cycling Experience</strong></span></span>
+      <span class="line"><span class="line-in">for Everyday Riders</span></span>
+    </h1>
+
+    <p class="cs-lede">
+      This is a concept project I initiated to explore how product design can address
+      real-world safety problems for cyclists.
+    </p>
+
+    <dl class="cs-meta">
+      <div class="cs-meta-item">
+        <dt>Scope</dt>
+        <dd>UI/UX Design and Research</dd>
+      </div>
+      <div class="cs-meta-item">
+        <dt>Timeline</dt>
+        <dd>1 month</dd>
+      </div>
+      <div class="cs-meta-item">
+        <dt>Project Type</dt>
+        <dd>Personal design project</dd>
+      </div>
+    </dl>
+  </section>
+
+  <!-- ============ HERO IMAGE ============ -->
+  <figure class="cs-figure cs-figure-lead reveal">
+    <img src="images/cyclista.png" alt="Cyclista app screens showing turn-by-turn navigation, onboarding and a ride feed">
+  </figure>
+
+  <!-- ============ BODY ============ -->
+  <div class="cs-body">
+
+    <section class="cs-section reveal">
+      <h2>The problem</h2>
+      <p>
+        Cycling apps are built for performance. But for casual riders and daily commuters,
+        the real challenge isn&rsquo;t tracking speed. It&rsquo;s feeling safe on unfamiliar
+        roads and knowing help is nearby when something goes wrong.
+      </p>
+      <p>
+        Most apps help you track a ride but offer nothing when you need roadside help,
+        encounter an accident, or get lost. That gap was the starting point for this project.
+      </p>
+      <p>I identified two underserved areas:</p>
+
+      <h3>Accessibility</h3>
+      <p>
+        Most cycling apps have overwhelming interfaces and complex metrics that aren&rsquo;t
+        useful for casual riders.
+      </p>
+
+      <h3>Safety</h3>
+      <p>
+        There&rsquo;s no immediate way to get help during emergencies. Riders rely on external
+        tools or personal contacts, with no real-time support from nearby cyclists.
+      </p>
+    </section>
+
+    <section class="cs-section reveal">
+      <h2>Understanding the users</h2>
+      <p>
+        I conducted competitive analysis across popular cycling apps and interviewed casual
+        riders and daily commuters to understand their pain points. Two patterns came up
+        repeatedly: riders felt unsupported in unfamiliar areas, and existing apps assumed a
+        level of cycling expertise that most users didn&rsquo;t have.
+      </p>
+      <p>
+        These insights shaped three design principles: keep the core experience simple, make
+        safety feel built-in rather than bolted on, and design for trust around location
+        sharing.
+      </p>
+    </section>
+
+    <section class="cs-section reveal">
+      <h2>Key design decisions</h2>
+
+      <h3>Streamlined core experience</h3>
+      <p>
+        I stripped the interface down to essential actions: start a ride, track progress, and
+        view summaries. Every screen was designed with casual riders in mind, removing
+        unnecessary metrics and focusing on clarity.
+      </p>
+
+      <h3>Proximity-based SOS system</h3>
+      <p>
+        The core design challenge was making emergency help feel instant without being
+        intrusive. I designed a system where riders can ping nearby cyclists with their
+        location in two taps. The interaction had to be fast enough for real emergencies but
+        intentional enough to prevent false alerts. Nearby cyclists receive a notification and
+        can respond directly within the app, removing the need for external communication
+        tools.
+      </p>
+
+      <h3>Trust and control</h3>
+      <p>
+        Because this involves user safety and location data, I designed clear controls around
+        visibility. Users choose when they are discoverable by others. SOS is triggered
+        intentionally, not automatically. And every step provides clear feedback so users know
+        exactly when help has been requested and when someone is responding.
+      </p>
+    </section>
+
+    <section class="cs-section reveal">
+      <h2>Process and iteration</h2>
+      <p>
+        I started with low-fidelity wireframes and ran usability tests during the design sprint
+        to validate the core flows. Key iterations included simplifying the SOS trigger from a
+        three-step process to two taps based on user feedback, and redesigning the notification
+        system for responders after testers found the original version unclear.
+      </p>
+      <p>
+        I also built a complete design system following atomic design methodology to ensure
+        consistency across all screens and to make the project scalable if taken to
+        development.
+      </p>
+    </section>
+
+    <section class="cs-section reveal">
+      <h2>Results</h2>
+      <p>
+        While this is a concept project, I validated the designs through prototype testing:
+      </p>
+      <ul class="cs-list">
+        <li>Users completed the SOS flow in under 5 seconds during testing.</li>
+        <li>
+          The streamlined interface tested well with non-cyclists who found existing apps
+          intimidating.
+        </li>
+        <li>
+          Usability feedback directly shaped two major iterations to the SOS and notification
+          flows.
+        </li>
+      </ul>
+    </section>
+
+  </div>
+
+  <!-- ============ CTA ============ -->
+  <section class="cs-cta reveal">
+    <div class="cta-inner">
+      <div class="cta-text">
+        <h2>Interested in working together?</h2>
+        <p>
+          I&rsquo;m always up for good conversations about product design, complex
+          problems, or new opportunities. Don&rsquo;t be a stranger.
+        </p>
+        <a class="cta-mail" href="mailto:shaznayluna@gmail.com">shaznayluna@gmail.com</a>
+      </div>
+
+      <div class="cta-art" aria-hidden="true">
+        <img class="cta-shot cta-shot-1" src="images/wallet-app.png" alt="">
+        <img class="cta-shot cta-shot-2" src="images/property-search.png" alt="">
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <a class="logo" href="index.html">shaznay<br>luna</a>
+  <nav class="footer-links" aria-label="Elsewhere">
+    <a href="https://www.linkedin.com/in/YOUR-HANDLE" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="mailto:shaznayluna@gmail.com">Say hello on my email :)</a>
+  </nav>
+</footer>
+
+</body>
+</html>
