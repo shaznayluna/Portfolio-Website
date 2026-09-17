@@ -1478,6 +1478,11 @@ html.js-cursor .cursor-dot.is-hidden { opacity: 0; }
     rgba(10, 13, 17, 0.86);
 }
 
+/* In the Designer the modal carries the `open` attribute so its cards can
+   be edited on the canvas. Published, it stays hidden until the script
+   opens it properly. */
+.about-modal[open]:not(.is-open) { display: none; }
+
 /* the artwork sits inset, with the card showing around it */
 .fact-dialog-inner {
   padding: 0.75rem;

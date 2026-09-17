@@ -304,12 +304,18 @@ onReady(function () {
       if (target) {
         target.addEventListener("close", dropCursorBack);
         target.addEventListener("close", pauseVideos);
+        target.addEventListener("close", function () { this.classList.remove("is-open"); });
       }
     }
 
     openers[i].addEventListener("click", function () {
       var dialog = document.getElementById(this.getAttribute("data-opens"));
       if (!dialog) return;
+      /* The Webflow build leaves the dialog `open` so it can be edited on
+         the canvas; CSS hides it until .is-open, and showModal() needs it
+         closed first. */
+      dialog.removeAttribute("open");
+      dialog.classList.add("is-open");
       if (typeof dialog.showModal === "function") {
         dialog.showModal();
       } else {
