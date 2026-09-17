@@ -50,7 +50,14 @@ function hasFinePointer() {
     }
   }
 
-  function apply(v) { root.setAttribute("data-theme", v); sync(v); }
+  /* data-theme drives the static site's CSS; .theme-dark is the class the
+     Webflow build binds its Dark variable mode to. Setting both keeps one
+     script serving both builds. */
+  function apply(v) {
+    root.setAttribute("data-theme", v);
+    root.classList.toggle("theme-dark", v === "dark");
+    sync(v);
+  }
 
   var saved = read();
   apply(saved === "light" || saved === "dark" ? saved : systemPref());
