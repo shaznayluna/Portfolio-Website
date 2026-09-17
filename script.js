@@ -104,9 +104,12 @@ function hasFinePointer() {
   setTimeout(start, 8000);
 }());
 
-/* ---------- scroll reveals ---------- */
+/* ---------- scroll reveals ----------
+   Measured with getBoundingClientRect on scroll rather than an
+   IntersectionObserver: the observer never fires inside Webflow's
+   Designer preview frame, which left every .reveal stranded at opacity 0.
+   A rect check costs nothing at this element count and works everywhere. */
 (function () {
-  if (!("IntersectionObserver" in window)) return;
   document.documentElement.classList.add("js-reveal");
 
   function positionAmongSiblings(el) {
@@ -116,20 +119,40 @@ function hasFinePointer() {
   }
 
   onReady(function () {
-    var els = document.querySelectorAll(".reveal, [data-reveal]");  /* Webflow build marks reveals with an attribute */
+    var els = Array.prototype.slice.call(
+      document.querySelectorAll(".reveal, [data-reveal]"));   /* Webflow build marks reveals with an attribute */
     if (!els.length) return;
 
-    var io = new IntersectionObserver(function (entries) {
-      for (var i = 0; i < entries.length; i++) {
-        if (!entries[i].isIntersecting) continue;
-        var el = entries[i].target;
-        el.style.animationDelay = Math.min(positionAmongSiblings(el), 6) * 60 + "ms";
-        el.classList.add("is-in");
-        io.unobserve(el);
-      }
-    }, { rootMargin: "0px 0px -10% 0px", threshold: 0.06 });
+    var pending = false;
 
-    for (var j = 0; j < els.length; j++) io.observe(els[j]);
+    function check() {
+      pending = false;
+      /* reveal once the top edge clears the bottom 10% of the viewport */
+      var limit = window.innerHeight * 0.9;
+      for (var i = els.length - 1; i >= 0; i--) {
+        var r = els[i].getBoundingClientRect();
+        if (r.top < limit && r.bottom > 0) {
+          els[i].style.animationDelay = Math.min(positionAmongSiblings(els[i]), 6) * 60 + "ms";
+          els[i].classList.add("is-in");
+          els.splice(i, 1);
+        }
+      }
+      if (!els.length) {
+        window.removeEventListener("scroll", schedule);
+        window.removeEventListener("resize", schedule);
+      }
+    }
+
+    function schedule() {
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(check);
+    }
+
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    window.addEventListener("load", schedule);
+    check();
   });
 }());
 
