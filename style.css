@@ -575,6 +575,12 @@ a { color: inherit; text-decoration: none; }
 .card-mid   { aspect-ratio: 4 / 2.9; }
 .card-short { aspect-ratio: 4 / 2.4; }
 
+/* Webflow build: the size comes from the CMS "Card Size" field, written
+   onto a wrapper as data-size, so the same three ratios hang off that. */
+.card-slot[data-size="tall"  i] > .card { aspect-ratio: 4 / 3.7; }
+.card-slot[data-size="mid"   i] > .card { aspect-ratio: 4 / 2.9; }
+.card-slot[data-size="short" i] > .card { aspect-ratio: 4 / 2.4; }
+
 /* placeholder for the one card still without an image (match-details).
    Delete this rule and .card-note below once that image is in. */
 .grad-sky    { background: linear-gradient(150deg, #B4CBFA, #7FA6EE); }
